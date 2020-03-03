@@ -9,6 +9,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
 from dash.dependencies import Input, Output, State
+import gunicorn
 import cufflinks as cf
 
 # Initialize app
