@@ -19,3 +19,4 @@ pandas==0.25.1
 path.py==12.0.1
 pathlib2==2.3.5
 plotly==4.5.2
+moesifdjango==1.7.3
