@@ -162,7 +162,7 @@ Big_picture['total deaths']=timeseries_deaths_df.iloc[:,-1:]
 Big_picture['total recovered']=timeseries_recovered_df.iloc[:,-1:]
 
 #FOLIUM MAP EPIC
-world_map = folium.Map(location=[9, 8], zoom_start=2, tiles='Stamen Toner')
+world_map = folium.Map(location=[9, 8], zoom_start=2.2, tiles='Stamen Toner')
 
 for lat, lon, value1, value2, value3, name, province in zip(Big_picture['Lat'], Big_picture['Long'],
                                                             Big_picture['total confirmed'], Big_picture['total deaths'],
@@ -276,12 +276,16 @@ app.layout = html.Div(
                 html.H4(children="Covid-19 Tracker"),
                 html.P(
                     id="description",
-                    children="Coronaviruses (CoV) are a large family of viruses that cause illness ranging from the/"
-                             "common cold to more severe diseases such as Middle East Respiratory Syndrome (MERS-CoV)/"
-                             "and Severe Acute Respiratory Syndrome (SARS-CoV). A novel coronavirus (nCoV) is a new/"
-                             " strain that has not been previously identified in humans."
+                    children="Coronaviruses (CoV) are a large family of viruses that cause illness ranging from the\
+                             common cold to more severe diseases such as Middle East Respiratory Syndrome (MERS-CoV)\
+                             and Severe Acute Respiratory Syndrome (SARS-CoV).A novel coronavirus (nCoV) is a new\
+                             strain that has not been previously identified in humans.\
+                             Project is under development new changes soon and is opne for contributions\
+                             Contributors can fork it from https://github.com/mainadwitiya/CoVid-19-Tracker-Coronavirus-"
+
                 ),
-            ],
+
+],
         ),
         html.Div(
             id="app-container",
@@ -355,6 +359,7 @@ html.Div(
 
                     ],
                 ),
+
             ],
         ),
 
