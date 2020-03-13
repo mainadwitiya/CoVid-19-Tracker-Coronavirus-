@@ -39,11 +39,12 @@ new_timeseries_confirmed_df=timeseries_confirmed_df.drop(['Province/State','Lat'
 new_timeseries_deaths_df=timeseries_deaths_df.drop(['Province/State','Lat','Long'],axis=1)
 new_timeseries_recovered_df=timeseries_recovered_df.drop(['Province/State','Lat','Long'],axis=1)
 
+
 #GETTING CONFIRMED CASES FOR CHINA
 
 new_timeseries_confirmed_df=new_timeseries_confirmed_df.groupby(['Country/Region'],as_index=False).agg('sum')
 xc=new_timeseries_confirmed_df
-select_country_1 = xc[xc['Country/Region'] == 'Mainland China']
+select_country_1 = xc[xc['Country/Region'] == 'China']
 select_country_1=select_country_1.loc[:,select_country_1.columns!='Country/Region']
 xc=select_country_1.T
 mapping={xc.columns[0]:'Confirmed cases in Main Land China'}
@@ -54,7 +55,7 @@ zc=zc.rename_axis('Date').reset_index()
 
 new_timeseries_deaths_df=new_timeseries_deaths_df.groupby(['Country/Region'],as_index=False).agg('sum')
 xd=new_timeseries_deaths_df
-select_country_2 = xd[xd['Country/Region'] == 'Mainland China']
+select_country_2 = xd[xd['Country/Region'] == 'China']
 select_country_2=select_country_2.loc[:,select_country_2.columns!='Country/Region']
 xd=select_country_2.T
 mapping={xd.columns[0]:'Deaths in Main Land China'}
@@ -66,7 +67,7 @@ zd=zd.rename_axis('Date').reset_index()
 
 new_timeseries_recovered_df=new_timeseries_recovered_df.groupby(['Country/Region'],as_index=False).agg('sum')
 xr=new_timeseries_recovered_df
-select_country_3 = xr[xr['Country/Region'] == 'Mainland China']
+select_country_3 = xr[xr['Country/Region'] == 'China']
 select_country_3=select_country_3.loc[:,select_country_3.columns!='Country/Region']
 xr=select_country_3.T
 mapping={xr.columns[0]:'Recovered in Main Land China'}
@@ -362,11 +363,17 @@ html.Div(
                     ],
                 ),
 
+                html.Div(
+                    
+
+                )
+
             ],
         ),
 
 
     ],
+
 )
 @app.callback(
     Output(component_id="graph",component_property="figure"),
