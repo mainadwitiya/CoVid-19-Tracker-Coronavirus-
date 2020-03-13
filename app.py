@@ -148,9 +148,9 @@ fig_all.update_layout(title="Plot for corona virus cases in china",template="plo
 
 #more DATA MANIPULATION
 
-timeseries_confirmed_df2 = timeseries_confirmed_df[timeseries_confirmed_df['Country/Region'] == 'Mainland China']
-timeseries_deaths_df2 = timeseries_deaths_df[timeseries_confirmed_df['Country/Region'] == 'Mainland China']
-timeseries_recovered_df2 = timeseries_recovered_df[timeseries_confirmed_df['Country/Region'] == 'Mainland China']
+timeseries_confirmed_df2 = timeseries_confirmed_df[timeseries_confirmed_df['Country/Region'] == 'China']
+timeseries_deaths_df2 = timeseries_deaths_df[timeseries_confirmed_df['Country/Region'] == 'China']
+timeseries_recovered_df2 = timeseries_recovered_df[timeseries_confirmed_df['Country/Region'] == 'China']
 mainland_china=timeseries_confirmed_df2
 mainland_china['total confirmed'] =timeseries_confirmed_df2.iloc[:,-1:].sum(axis=1)
 mainland_china['total deaths']=timeseries_deaths_df2.iloc[:,-1:].sum(axis=1)
