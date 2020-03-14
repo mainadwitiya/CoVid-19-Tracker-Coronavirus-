@@ -20,3 +20,4 @@ path.py==12.0.1
 pathlib2==2.3.5
 plotly==4.5.2
 moesifdjango==1.7.3
+dash-daq==0.4.0

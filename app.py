@@ -9,6 +9,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
 from dash.dependencies import Input, Output, State
+import dash_daq as daq
 import gunicorn
 import cufflinks as cf
 
@@ -277,16 +278,17 @@ app.layout = html.Div(
 
 
                 html.H4(children="Covid-19 Tracker"),
-                html.P(
+               html.P(
                     id="description",
                     children="Coronaviruses (CoV) are a large family of viruses that cause illness ranging from the\
                              common cold to more severe diseases such as Middle East Respiratory Syndrome (MERS-CoV)\
                              and Severe Acute Respiratory Syndrome (SARS-CoV).A novel coronavirus (nCoV) is a new\
                              strain that has not been previously identified in humans.\
-                             Project is under development new changes soon and is opne for contributions\
+                             Project is under development new changes soon and is open for contributions\
                              Contributors can fork it from https://github.com/mainadwitiya/CoVid-19-Tracker-Coronavirus-"
 
                 ),
+
 
 ],
         ),
