@@ -14,19 +14,29 @@ import gunicorn
 import cufflinks as cf
 
 # Initialize app
+external_stylesheets = [
+    {
+        'href': 'https://cdnjs.cloudflare.com/ajax/libs/bulma/0.8.0/css/bulma.css',
+        'rel': 'stylesheet',
 
+    }
+]
 app = dash.Dash(
     __name__,
+    external_stylesheets=external_stylesheets,
     meta_tags=[
         {"name": "viewport", "content": "width=device-width, initial-scale=1.0"}
     ],
+
 )
+
+
 server = app.server
 app.title = 'Covid-19 App'
 
 # Load data
-confirmed_timeseries_url='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv'
-deaths_timeseries_url='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv'
+confirmed_timeseries_url='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
+deaths_timeseries_url='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
 recovered_timeseries_url='https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv'
 timeseries_confirmed_df=pd.read_csv(confirmed_timeseries_url)
 #making this bigpicture stuff
@@ -151,7 +161,7 @@ fig_all.update_layout(title="Plot for corona virus cases in china",template="plo
 
 timeseries_confirmed_df2 = timeseries_confirmed_df[timeseries_confirmed_df['Country/Region'] == 'China']
 timeseries_deaths_df2 = timeseries_deaths_df[timeseries_confirmed_df['Country/Region'] == 'China']
-timeseries_recovered_df2 = timeseries_recovered_df[timeseries_confirmed_df['Country/Region'] == 'China']
+timeseries_recovered_df2 = timeseries_recovered_df[timeseries_recovered_df['Country/Region'] == 'China']
 mainland_china=timeseries_confirmed_df2
 mainland_china['total confirmed'] =timeseries_confirmed_df2.iloc[:,-1:].sum(axis=1)
 mainland_china['total deaths']=timeseries_deaths_df2.iloc[:,-1:].sum(axis=1)
@@ -161,32 +171,41 @@ alldeaths_china=mainland_china['total deaths'].sum()
 allrecovered_china=mainland_china['total recovered'].sum()
 Big_picture=timeseries_confirmed_df
 Big_picture=Big_picture.iloc[:,np.r_[0:4]]
+
+
 Big_picture['total confirmed']=timeseries_confirmed_df.iloc[:,-1:]
+
 Big_picture['total deaths']=timeseries_deaths_df.iloc[:,-1:]
 Big_picture['total recovered']=timeseries_recovered_df.iloc[:,-1:]
+Big_picture['Active cases']=abs(Big_picture['total confirmed']) -abs(Big_picture['total deaths']) -abs(Big_picture['total recovered'])
+Big_picture=Big_picture[Big_picture['total confirmed']!=0]
 
+colordict = {0: 'lightblue', 1: 'lightgreen', 2: 'orange', 3: 'red'}
 #FOLIUM MAP EPIC
-world_map = folium.Map(location=[9, 8], zoom_start=2.2, tiles='Stamen Toner')
+world_map = folium.Map(location=[32, 53], zoom_start=4, min_zoom=1, tiles='Stamen Toner')
 
-for lat, lon, value1, value2, value3, name, province in zip(Big_picture['Lat'], Big_picture['Long'],
+for lat, lon, value1, value2, value3,value4, name, province in zip(Big_picture['Lat'], Big_picture['Long'],
                                                             Big_picture['total confirmed'], Big_picture['total deaths'],
                                                             Big_picture['total recovered'],
+                                                            Big_picture['Active cases'],
                                                             Big_picture['Country/Region'],
                                                             Big_picture['Province/State']):
     folium.CircleMarker([lat, lon],
-                        radius=9,
+
+                        radius=10,
+
+
                         popup=('<strong>Province/State</strong>: ' + str(province).capitalize() + '<br>'
                                                                                                   '<strong>Country</strong>: ' + str(
                             name).capitalize() + '<br>'
                                                  '<strong>Confirmed Cases</strong>: ' + str(value1) + '<br>'
-                                                                                                      '<strong>Deaths</strong>: ' + str(
-                            value2) + '<br>'
-                                      '<strong>Recovered</strong>: ' + str(value3) + '<br>'
-                               ),
-                        color='#D73027',
+                                                                                                      '<strong>Deaths</strong>: ' + str(value2) + '<br>''<strong>Recovered</strong>: '
+                               + str(value3) + '<br>'
+                               '<strong>Active cases</strong>: '+str(value4)+'<br>'),
+                        color='red',
 
                         fill_color='#D73027',
-                        fill_opacity=0.8).add_to(world_map)
+                        fill_opacity=0.7).add_to(world_map)
 world_map.save('index.html')
 
 
@@ -274,23 +293,21 @@ app.layout = html.Div(
         html.Div(
             id="header",
             children=[
-                html.H4(id="logo",children="Total Cases-"+str(total_confirmed)),
-
+                html.H4(id="logo", children="Total Cases-" + str(total_confirmed)),
 
                 html.H4(children="Covid-19 Tracker"),
-               html.P(
+                html.P(
                     id="description",
                     children="Coronaviruses (CoV) are a large family of viruses that cause illness ranging from the\
                              common cold to more severe diseases such as Middle East Respiratory Syndrome (MERS-CoV)\
                              and Severe Acute Respiratory Syndrome (SARS-CoV).A novel coronavirus (nCoV) is a new\
                              strain that has not been previously identified in humans.\
-                             Project is under development new changes soon and is open for contributions\
+                             Project is under development new changes soon and is opne for contributions\
                              Contributors can fork it from https://github.com/mainadwitiya/CoVid-19-Tracker-Coronavirus-"
 
                 ),
 
-
-],
+            ],
         ),
         html.Div(
             id="app-container",
@@ -298,7 +315,7 @@ app.layout = html.Div(
                 html.Div(
                     id="left-column",
                     children=[
-html.Div(
+                        html.Div(
                             [
                                 html.Div(
                                     [html.H6("No. Of Deaths"), html.P(str(total_deaths))],
@@ -307,21 +324,15 @@ html.Div(
                                     className="mini_container",
                                 ),
 
-
                             ],
                             id="info-container",
                             className="row container-display",
                         ),
 
-                            html.Div(
+                        html.Div(
 
-
-                              html.Div(html.Iframe(id='map',srcDoc=open('index.html','r').read(), width='100%',height='500'))),
-
-
-
-
-
+                            html.Div(html.Iframe(id='map', srcDoc=open('index.html', 'r').read(), width='100%',
+                                                 height='500'))),
 
                     ],
                 ),
@@ -349,11 +360,11 @@ html.Div(
                                     "label": "Time Series graph of Death toll (China)",
                                     "value": "fig_china_deaths",
                                 },
-{
+                                {
                                     "label": "Time Series graph of Recovered Patients(China)",
                                     "value": "fig_china_recovered",
                                 },
-{
+                                {
                                     "label": "Time Series Graph of Fatality Rate(China)",
                                     "value": "fig_china_fatality",
                                 },
@@ -366,39 +377,40 @@ html.Div(
                 ),
 
                 html.Div(
-                    
 
                 )
 
             ],
         ),
 
-
     ],
 
 )
+
+
 @app.callback(
-    Output(component_id="graph",component_property="figure"),
-    [Input(component_id="dropdown",component_property="value")],
+    Output(component_id="graph", component_property="figure"),
+    [Input(component_id="dropdown", component_property="value")],
 )
 def update_output_div(input_value):
-    if input_value=="fig_all":
+    if input_value == "fig_all":
         return fig_all
 
-    if input_value=="fig":
+    if input_value == "fig":
         return fig
 
-    if input_value=="fig_china_confirmed":
+    if input_value == "fig_china_confirmed":
         return fig_china_confirmed
 
-    if input_value=="fig_china_deaths":
+    if input_value == "fig_china_deaths":
         return fig_china_deaths
 
-    if input_value=="fig_china_recovered":
+    if input_value == "fig_china_recovered":
         return fig_china_recovered
 
-    if input_value=="fig_china_fatality":
+    if input_value == "fig_china_fatality":
         return fig_china_fatality
+
 
 if __name__ == "__main__":
     app.run_server(debug=True)

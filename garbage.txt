@@ -1,0 +1,7 @@
+  daq.LEDDisplay(
+                        id="operator-led",
+                        className="flex mb-4",
+                        value=str(total_confirmed),
+                        color="#9970AB",
+                        backgroundColor="#1e2130",
+                        size=30,
