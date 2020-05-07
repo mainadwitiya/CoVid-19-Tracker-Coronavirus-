@@ -481,30 +481,33 @@ Big_picture = Big_picture.iloc[:, np.r_[0:4]]
 Big_picture['total confirmed'] = timeseries_confirmed_df.iloc[:, -1:]
 Big_picture['total deaths'] = timeseries_deaths_df.iloc[:, -1:]
 Big_picture['total recovered'] = timeseries_recovered_df.iloc[:, -1:]
+print(Big_picture['total confirmed'])
+df_confirmed = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+df_deaths = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
+df_confirmed = df_confirmed.rename(columns={"Province/State":"state","Country/Region": "country"})
 
-# FOLIUM MAP EPIC
-world_map = folium.Map(location=[9, 8], zoom_start=2.2, tiles='Stamen Toner')
+world_map = folium.Map(location=[10,0], tiles="Stamen Toner", zoom_start=2,max_zoom=6,min_zoom=2)
+for i in range(0,len(df_confirmed)):
+    folium.Circle(
+        location=[df_confirmed.iloc[i]['Lat'], df_confirmed.iloc[i]['Long']],
+        tooltip = "<h5 style='text-align:center;font-weight: bold'>"+df_confirmed.iloc[i]['country']+"</h5>"+
 
-for lat, lon, value1, value2, value3, name, province in zip(Big_picture['Lat'], Big_picture['Long'],
-                                                            Big_picture['total confirmed'], Big_picture['total deaths'],
-                                                            Big_picture['total recovered'],
-                                                            Big_picture['Country/Region'],
-                                                            Big_picture['Province/State']):
-    folium.CircleMarker([lat, lon],
-                        radius=9,
-                        popup=('<strong>Province/State</strong>: ' + str(province).capitalize() + '<br>'
-                                                                                                  '<strong>Country</strong>: ' + str(
-                            name).capitalize() + '<br>'
-                                                 '<strong>Confirmed Cases</strong>: ' + str(value1) + '<br>'
-                                                                                                      '<strong>Deaths</strong>: ' + str(
-                            value2) + '<br>'
-                                      '<strong>Recovered</strong>: ' + str(value3) + '<br>'
-                               ),
-                        color='#D73027',
+                    "<hr style='margin:10px;'>"+
+                    "<ul style='color: #444;list-style-type:circle;align-item:left;padding-left:20px;padding-right:20px'>"+
+        "<li>Confirmed: "+str(df_confirmed.iloc[i,-1])+"</li>"+
+        "<li>Deaths:   "+str(df_deaths.iloc[i,-1])+"</li>"+
+        "<li>Mortality Rate:   "+str(np.round(df_deaths.iloc[i,-1]/(df_confirmed.iloc[i,-1]+1.00001)*100,2))+"</li>"+
+                  "<hr style='margin:10px;'>" 
+        "</ul>"
+        ,
+        radius=(int((np.log(df_confirmed.iloc[i,-1]+1.00001)))+0.2)*50000,
+        color='#D73027',
+        fill_color='#ff8533',
+        fill_opacity=0.5).add_to(world_map)
 
-                        fill_color='#D73027',
-                        fill_opacity=0.8).add_to(world_map)
 world_map.save('index.html')
+
+
 
 # FINAL BAR GRAPHCOMPARISON
 total_new = pd.DataFrame()
